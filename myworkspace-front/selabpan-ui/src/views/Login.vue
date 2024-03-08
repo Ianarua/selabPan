@@ -1,6 +1,5 @@
 <template>
     <div class="login-body">
-        <div class="bg"></div>
         <div class="login-panel">
             <el-form
                 class="login-register"
@@ -9,7 +8,7 @@
                 ref="formDataRef"
                 @submit.prevent
             >
-                <div class="login-title">Easy云盘</div>
+                <div class="login-title">Selab云盘</div>
                 <!-- input输入 -->
                 <el-form-item prop="email">
                     <el-input
@@ -62,8 +61,9 @@
                                 <p>3.将邮箱【3503201604@qq.com】添加到白名单不知道怎么设置?</p>
                             </div>
                             <template #reference>
-                            <span class="a-link" :style="{ 'font-size': '14px' }"
-                            >未收到邮箱验证码?</span>
+                                <span class="a-link" :style="{ 'font-size': '14px' }">
+                                    未收到邮箱验证码?
+                                </span>
                             </template>
                         </el-popover>
                     </el-form-item>
@@ -159,18 +159,15 @@
                         <span v-if="opType === 2">重置密码</span>
                     </el-button>
                 </el-form-item>
-                <div class="login-btn-qq" v-if="opType === 1">
-                    快捷登录<img src="@/assets/qq.png" @click="qqLogin"/>
-                </div>
             </el-form>
         </div>
         <Dialog
-            :show="dialogConfig4SendMailCode.show"
-            :title="dialogConfig4SendMailCode.title"
-            :buttons="dialogConfig4SendMailCode.buttons"
+            :show="dialogConfigSendMailCode.show"
+            :title="dialogConfigSendMailCode.title"
+            :buttons="dialogConfigSendMailCode.buttons"
             width="500px"
             :showCancel="false"
-            @close="dialogConfig4SendMailCode.show = false"
+            @close="dialogConfigSendMailCode.show = false"
         >
             <el-form
                 :model="formData4SendMailCode"
@@ -196,7 +193,7 @@
                             </template>
                         </el-input>
                         <img
-                            :src="checkCodeUrl4SendMailCode"
+                            :src="checkCodeUrlSendMailCode"
                             class="check-code"
                             @click="changeCheckCode(1)"
                         />
@@ -270,13 +267,13 @@ const rules = {
 };
 
 const checkCodeUrl = ref(api.checkCode);
-const checkCodeUrl4SendMailCode = ref(api.checkCode);
+const checkCodeUrlSendMailCode = ref(api.checkCode);
 const changeCheckCode = (type) => {
     if (type === 0) {
         checkCodeUrl.value =
             api.checkCode + '?type=' + type + '&time=' + new Date().getTime();
     } else {
-        checkCodeUrl4SendMailCode.value =
+        checkCodeUrlSendMailCode.value =
             api.checkCode + '?type=' + type + '&time=' + new Date().getTime();
     }
 };
@@ -285,7 +282,7 @@ const changeCheckCode = (type) => {
 const formData4SendMailCode = ref({});
 const formData4SendMailCodeRef = ref();
 
-const dialogConfig4SendMailCode = reactive({
+const dialogConfigSendMailCode = reactive({
     show: false,
     title: '发送邮箱验证码',
     buttons: [
@@ -303,7 +300,7 @@ const getEmailCode = () => {
         if (!valid) {
             return;
         }
-        dialogConfig4SendMailCode.show = true;
+        dialogConfigSendMailCode.show = true;
         nextTick(() => {
             changeCheckCode(1);
             formData4SendMailCodeRef.value.resetFields();
@@ -332,7 +329,7 @@ const sendEmailCode = () => {
             return;
         }
         proxy.Message.success('验证码发送成功,请登录邮箱查看');
-        dialogConfig4SendMailCode.show = false;
+        dialogConfigSendMailCode.show = false;
     });
 };
 
@@ -366,11 +363,13 @@ const doSubmit = () => {
         // 登录
         if (opType.value === 1) {
             let cookieLoginInfo = proxy.VueCookies.get('loginInfo');
+            console.log('cookie', cookieLoginInfo);
             let cookiePassword = cookieLoginInfo == null ? null : cookieLoginInfo.password;
             if (params.password !== cookiePassword) {
                 params.password = md5(params.password);
             }
         }
+        // 发登陆注册忘记密码请求
         let url = null;
         if (opType.value === 0) {
             url = api.register;
@@ -409,7 +408,7 @@ const doSubmit = () => {
             proxy.VueCookies.set('userInfo', result.data, 0);
             // 重定向到原始页面
             const redirectUrl = route.query.redirectUrl || '/';
-            router.push(redirectUrl);
+            await router.push(redirectUrl);
         } else if (opType.value === 2) {
             // 重置密码
             proxy.Message.success('重置密码成功,请登录');
@@ -417,48 +416,27 @@ const doSubmit = () => {
         }
     });
 };
-
-// qq登录
-const qqLogin = async () => {
-    let result = await proxy.Request({
-        url: api.qqlogin,
-        params: {
-            callbackUrl: route.query.redirectUrl || ''
-        }
-    });
-    if (!result) {
-        return;
-    }
-    proxy.VueCookies.remove('userInfo');
-    document.location.href = result.data;
-};
 </script>
 
 <style lang="scss" scoped>
 .login-body {
     height: calc(100vh);
     background-size: cover;
-    background: url('../assets/login_bg.jpg');
+    background: url('../assets/login_bg.png') no-repeat 50% 50%;
     display: flex;
 
-    .bg {
-        flex: 1;
-        background-size: cover;
-        background-position: left;
-        background-size: 660px;
-        background-repeat: no-repeat;
-        background-image: url('../assets/login_img.svg');
-    }
-
     .login-panel {
-        width: 430px;
-        margin-right: 5%;
-        margin-top: calc((100vh - 550px) / 2);
+        width: 1030px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10%;
 
         .login-register {
+            width: 50%;
             padding: 25px;
             background: #fff;
-            border-radius: 5px;
+            border-radius: 10%;
 
             .login-title {
                 text-align: center;
@@ -507,7 +485,7 @@ const qqLogin = async () => {
                     border: 0;
                     letter-spacing: 1px;
                     line-height: 44px;
-                    box-shadow: 3px 0px 0px #04ebfc;
+                    box-shadow: 3px 0 0 #04ebfc;
                     outline: transparent;
                     position: relative;
                 }

@@ -3,7 +3,7 @@
         <div class="top">
             <el-button
                 type="primary"
-                :disabled="selectIdList.length == 0"
+                :disabled="selectIdList.length === 0"
                 @click="cancelShareBatch"
             >
                 <span class="iconfont icon-cancel"></span>
@@ -29,32 +29,28 @@
                     >
                         <template
                             v-if="
-                  (row.fileType == 3 || row.fileType == 1) && row.status !== 0
+                  (row.fileType === 3 || row.fileType === 1) && row.status !== 0
                 "
                         >
                             <Icon :cover="row.fileCover"></Icon>
                         </template>
                         <template v-else>
-                            <Icon v-if="row.folderType == 0" :fileType="row.fileType"></Icon>
-                            <Icon v-if="row.folderType == 1" :fileType="0"></Icon>
+                            <Icon v-if="row.folderType === 0" :fileType="row.fileType"></Icon>
+                            <Icon v-if="row.folderType === 1" :fileType="0"></Icon>
                         </template>
-                        <span class="file-name" :title="row.fileName">{{
-                                row.fileName
-                            }}</span>
+                        <span class="file-name" :title="row.fileName">
+                            {{ row.fileName }}
+                        </span>
                         <span class="op">
                 <template v-if="row.showOp">
-                    <span class="iconfont icon-link" @click="copy(row)"
-                    >复制链接</span
-                    >
-                    <span class="iconfont icon-cancel" @click="cancelShare(row)"
-                    >取消分享</span
-                    >
+                    <span class="iconfont icon-link" @click="copy(row)">复制链接</span>
+                    <span class="iconfont icon-cancel" @click="cancelShare(row)">取消分享</span>
                 </template>
               </span>
                     </div>
                 </template>
                 <template #expireTime="{ index, row }">
-                    {{ row.validType == 3 ? '永久' : row.expireTime }}
+                    {{ row.validType === 3 ? '永久' : row.expireTime }}
                 </template>
             </Table>
         </div>
@@ -157,7 +153,7 @@ const copy = async (data) => {
 // 取消分享
 const cancelShareIdList = ref([]);
 const cancelShareBatch = () => {
-    if (selectIdList.value.length == 0) {
+    if (selectIdList.value.length === 0) {
         return;
     }
     cancelShareIdList.value = selectIdList.value;
@@ -181,7 +177,7 @@ const cancelShareDone = () => {
             return;
         }
         proxy.Message.success('取消分享成功');
-        loadDataList();
+        await loadDataList();
     });
 };
 </script>

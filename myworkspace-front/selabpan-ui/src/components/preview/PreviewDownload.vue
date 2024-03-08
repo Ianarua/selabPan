@@ -3,7 +3,7 @@
       <div class="body-content">
         <div>
           <Icon
-            :iconName="fileInfo.fileType == 9 ? 'zip' : 'others'"
+            :iconName="fileInfo.fileType === 9 ? 'zip' : 'others'"
             :width="80"
           ></Icon>
         </div>

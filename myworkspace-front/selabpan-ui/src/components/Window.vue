@@ -2,43 +2,44 @@
     <div class="window" v-if="show">
         <div class="window-mask" @click="close" v-if="show"></div>
         <div class="close" @click="close">
-          <span class="iconfont icon-close2"></span>
+            <span class="iconfont icon-close2"></span>
         </div>
         <div
-          class="window-content"
-          :style="{
+            class="window-content"
+            :style="{
             top: '0px',
             left: windowContentLeft + 'px',
             width:windowContentWidth + 'px',
           }"
         >
-          <div class="title">{{ title }}</div>
-          <div class="content-body" :style="{ 'align-items' : 'align' }">
-            <slot></slot>
+            <div class="title">{{ title }}</div>
+            <div class="content-body" :style="{ 'align-items' : 'align' }">
+                <slot></slot>
+            </div>
         </div>
-      </div>
     </div>
 </template>
 
 <script setup>
-import { ref, reactive, getCurrentInstance, nextTick, computed, onMounted, onUnmounted } from "vue";
-const { proxy } = getCurrentInstance();
+import { ref, getCurrentInstance, computed, onMounted, onUnmounted } from 'vue';
+
+const {proxy} = getCurrentInstance();
 
 const props = defineProps({
     show: {
-        type: Boolean,
+        type: Boolean
     },
     width: {
         type: Number,
-        default: 1000,
+        default: 1000
     },
     title: {
-        type: String,
+        type: String
     },
     align: {
         type: String,
-        default: "top",
-    },
+        default: 'top'
+    }
 });
 
 const windowWidth = ref(window.innerWidth);
@@ -50,9 +51,9 @@ const windowContentLeft = computed(() => {
     return left < 0 ? 0 : left / 2;
 });
 
-const emit = defineEmits(["close"]);
+const emit = defineEmits(['close']);
 const close = () => {
-    emit("close");
+    emit('close');
 };
 
 const resizeWindow = () => {
@@ -60,11 +61,11 @@ const resizeWindow = () => {
 };
 
 onMounted(() => {
-    window.addEventListener("resize", resizeWindow);
+    window.addEventListener('resize', resizeWindow);
 });
 
 onUnmounted(() => {
-    window.removeEventListener("resize", resizeWindow);
+    window.removeEventListener('resize', resizeWindow);
 });
 </script>
 
@@ -80,6 +81,7 @@ onUnmounted(() => {
         background: #000;
         position: fixed;
     }
+
     .close {
         z-index: 202;
         cursor: pointer;
@@ -93,23 +95,27 @@ onUnmounted(() => {
         display: flex;
         justify-content: center;
         align-items: center;
+
         .iconfont {
             font-size: 20px;
             color: #fff;
             z-index: 100000;
         }
     }
+
     .window-content {
         top: 0px;
         z-index: 201;
         position: absolute;
         background: #fff;
+
         .title {
             text-align: center;
             line-height: 40px;
             border-bottom: 1px solid #ddd;
             font-weight: bold;
         }
+
         .content-body {
             height: calc(100vh - 41px);
             display: flex;

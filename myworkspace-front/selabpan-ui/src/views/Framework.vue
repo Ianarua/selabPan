@@ -5,6 +5,7 @@
                 <div class="name">Selab云盘</div>
             </div>
             <div class="right-panel">
+                <!-- 任务栏 -->
                 <el-popover
                     :width="800"
                     trigger="click"
@@ -21,10 +22,11 @@
                         <Uploader
                             ref="uploaderRef"
                             @uploadCallback="uploadCallbackHandler"
-                        ></Uploader>
+                        />
                     </template>
                 </el-popover>
 
+                <!-- 头像下拉框 -->
                 <el-dropdown>
                     <div class="user-info">
                         <div class="avatar">
@@ -33,7 +35,7 @@
                                 :avatar="userInfo.avatar"
                                 :timestamp="timestamp"
                                 :width="46"
-                            ></Avatar>
+                            />
                         </div>
                         <span class="nick-name">{{ userInfo.nickName }}</span>
                     </div>
@@ -60,7 +62,7 @@
                             @click="jump(item)"
                             :class="[
                                 'menu-item',
-                                item.menuCode === currentMenu.menuCode ? 'active' : '',
+                                item.menuCode === currentMenu.menuCode ? 'active' : '',     // 判断当前选择的哪个
                             ]"
                         >
                             <div :class="['iconfont', 'icon-' + item.icon]"></div>
@@ -68,30 +70,20 @@
                         </div>
                     </template>
                 </div>
-                <div class="menu-sub-list">
+                <div class="menu-child-list">
                     <div
-                        @click="jump(sub)"
-                        :class="['menu-item-sub', currentPath === sub.path ? 'active' : '']"
-                        v-for="sub in currentMenu.children"
+                        v-for="child in currentMenu.children"
+                        @click="jump(child)"
+                        :class="['menu-item-child', currentPath === child.path ? 'active' : '']"
                     >
-                  <span
-                      :class="['iconfont', 'icon-' + sub.icon]"
-                      v-if="sub.icon"
-                  ></span>
-                        <span class="text">{{ sub.name }}</span>
-                    </div>
-                    <div class="tips" v-if="currentMenu && currentMenu.tips">
-                        {{ currentMenu.tips }}
+                        <span :class="['iconfont', 'icon-' + child.icon]" v-if="child.icon"/>
+                        <span class="text">{{ child.name }}</span>
                     </div>
                     <div class="space-info">
                         <div>空间使用</div>
                         <div class="percent">
                             <el-progress
-                                :percentage="
-                        Math.floor(
-                            (useSpaceInfo.useSpace / useSpaceInfo.totalSpace) * 10000
-                        ) / 100
-                      "
+                                :percentage="Math.floor((useSpaceInfo.useSpace / useSpaceInfo.totalSpace) * 10000) / 100"
                                 color="#f701ff"
                             ></el-progress>
                         </div>
@@ -120,8 +112,8 @@
         <!-- 修改头像 -->
         <UpdateAvatar
             ref="updateAvatarRef"
-            @updateAvatar="reloadAvatar"
-        ></UpdateAvatar>
+            @updateAvatar="reloadAvatar">
+        </UpdateAvatar>
         <!-- 修改密码 -->
         <UpdatePassword ref="updatePasswordRef"></UpdatePassword>
     </div>
@@ -132,7 +124,7 @@ import Uploader from '@/views/main/Uploader.vue';
 import UpdateAvatar from './UpdateAvatar.vue';
 import UpdatePassword from './UpdatePassword.vue';
 
-import { ref, reactive, getCurrentInstance, nextTick, watch } from 'vue';
+import { ref, reactive, getCurrentInstance, nextTick, watch, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 
 const {proxy} = getCurrentInstance();
@@ -159,12 +151,13 @@ const addFile = (data) => {
 const routerViewRef = ref();
 const uploadCallbackHandler = () => {
     nextTick(() => {
+        console.log(routerViewRef.value);
         routerViewRef.value.reload();
         getUseSpace();
     });
 };
 const timestamp = ref(0);
-//获取用户信息
+// 获取用户信息
 const userInfo = ref(proxy.VueCookies.get('userInfo'));
 
 const menus = [
@@ -231,7 +224,6 @@ const menus = [
         icon: 'del',
         name: '回收站',
         menuCode: 'recycle',
-        tips: '回收站为你保存10天内删除的文件',
         allShow: true,
         children: [
             {
@@ -333,7 +325,9 @@ const getUseSpace = async () => {
     useSpaceInfo.value = result.data;
 };
 
-getUseSpace();
+onMounted(() => {
+    getUseSpace();
+});
 </script>
 
 <style lang="scss" scoped>
@@ -484,12 +478,12 @@ getUseSpace();
             }
         }
 
-        .menu-sub-list {
+        .menu-child-list {
             width: 200px;
             padding: 20px 10px 0px;
             position: relative;
 
-            .menu-item-sub {
+            .menu-item-child {
                 text-align: center;
                 line-height: 40px;
                 border-radius: 5px;
@@ -519,12 +513,6 @@ getUseSpace();
                 .text {
                     color: #f701ff;
                 }
-            }
-
-            .tips {
-                margin-top: 10px;
-                color: #888888;
-                font-size: 13px;
             }
 
             .space-info {

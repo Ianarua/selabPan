@@ -1,35 +1,32 @@
 <template>
     <span class="avatar" :style="{ width: width + 'px', height: width + 'px' }">
         <img
-        :src="
-          avatar && avatar != ''
-          ? avatar
-          : `${proxy.globalInfo.avatarUrl}${userId}?${timestamp}`
-        "
-        v-if="userId"
-      />
+            :src="avatar && avatar !== '' ? avatar : `${proxy.globalInfo.avatarUrl} ${userId} ? ${timestamp}`"
+            v-if="userId"
+        />
     </span>
 </template>
 
 <script setup>
 import { getCurrentInstance } from 'vue';
-const { proxy } = getCurrentInstance();
+
+const {proxy} = getCurrentInstance();
 
 const props = defineProps({
     userId: {
-        type: String,
+        type: String
     },
     avatar: {
-        type: String,
+        type: String
     },
     timestamp: {
         type: Number,
-        default: 0,
+        default: 0
     },
     width: {
         type: Number,
-        default: 40,
-    },
+        default: 40
+    }
 });
 </script>
 
@@ -40,6 +37,7 @@ const props = defineProps({
     height: 40px;
     border-radius: 50%;
     overflow: hidden;
+
     img {
         width: 100%;
         object-fit: cover;

@@ -15,10 +15,10 @@
                         <el-progress
                             :percentage="item.uploadProgress"
                             v-if="
-                item.status == STATUS.uploading.value ||
-                item.status == STATUS.upload_seconds.value ||
-                item.status == STATUS.upload_finish.value
-              "
+                                item.status === STATUS.uploading.value ||
+                                item.status === STATUS.upload_seconds.value ||
+                                item.status === STATUS.upload_finish.value
+                            "
                         />
                     </div>
                     <div class="upload-status">
@@ -29,19 +29,15 @@
                         ></span>
                         <!-- 状态描述 -->
                         <span class="status" :style="{ color: STATUS[item.status].color }">
-              {{
-                                item.status == 'fail' ? item.errorMsg : STATUS[item.status].desc
-                            }}
-            </span>
+                          {{ item.status === 'fail' ? item.errorMsg : STATUS[item.status].desc }}
+                        </span>
                         <!-- 上传中 -->
                         <span
                             class="upload-info"
-                            v-if="item.status == STATUS.uploading.value"
+                            v-if="item.status === STATUS.uploading.value"
                         >
-              {{ proxy.Utils.size2Str(item.uploadSize) }} / {{
-                                proxy.Utils.size2Str(item.totalSize)
-                            }}
-            </span>
+                            {{ proxy.Utils.size2Str(item.uploadSize) }} / {{ proxy.Utils.size2Str(item.totalSize) }}
+                        </span>
                     </div>
                 </div>
                 <div class="op">
@@ -50,54 +46,53 @@
                         type="circle"
                         :width="50"
                         :percentage="item.md5Progress"
-                        v-if="item.status == STATUS.init.value"
+                        v-if="item.status === STATUS.init.value"
                     />
                     <div class="op-btn">
-            <span v-if="item.status === STATUS.uploading.value">
-              <Icon
-                  :width="28"
-                  class="btn-item"
-                  iconName="upload"
-                  v-if="item.pause"
-                  title="上传"
-                  @click="startUpload(item.uid)"
-              ></Icon>
-              <Icon
-                  v-else
-                  :width="28"
-                  class="btn-item"
-                  iconName="pause"
-                  title="暂停"
-                  @click="pauseUpload(item.uid)"
-              ></Icon>
-            </span>
+                        <span v-if="item.status === STATUS.uploading.value">
+                            <Icon
+                                :width="28"
+                                class="btn-item"
+                                iconName="upload"
+                                v-if="item.pause"
+                                title="上传"
+                                @click="startUpload(item.uid)"/>
+                            <Icon
+                                v-else
+                                :width="28"
+                                class="btn-item"
+                                iconName="pause"
+                                title="暂停"
+                                @click="pauseUpload(item.uid)"
+                            />
+                        </span>
                         <Icon
                             :width="28"
                             class="del btn-item"
                             iconName="del"
                             title="删除"
                             v-if="
-                  item.status != STATUS.init.value &&
-                  item.status != STATUS.upload_finish.value &&
-                  item.status != STATUS.upload_seconds.value
-                "
+                              item.status !== STATUS.init.value &&
+                              item.status !== STATUS.upload_finish.value &&
+                              item.status !== STATUS.upload_seconds.value
+                            "
                             @click="delUpload(item.uid, index)"
-                        ></Icon>
+                        />
                         <Icon
                             :width="28"
                             class="clean btn-item"
                             iconName="clean"
                             title="清除"
                             v-if="
-                  item.status == STATUS.upload_finish.value ||
-                  item.status == STATUS.upload_seconds.value
-                "
+                              item.status === STATUS.upload_finish.value ||
+                              item.status === STATUS.upload_seconds.value
+                            "
                             @click="delUpload(item.uid, index)"
-                        ></Icon>
+                        />
                     </div>
                 </div>
             </div>
-            <div v-if="fileList.length == 0">
+            <div v-if="fileList.length === 0">
                 <NoData msg="暂无上传任务"></NoData>
             </div>
         </div>
@@ -105,7 +100,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, getCurrentInstance, nextTick } from 'vue';
+import { getCurrentInstance, ref } from 'vue';
 import SparkMD5 from 'spark-md5';
 
 const {proxy} = getCurrentInstance();
@@ -187,16 +182,16 @@ const addFile = async (file, filePid) => {
     };
     // 加入文件
     fileList.value.unshift(fileItem);
-    if (fileItem.totalSize == 0) {
+    if (fileItem.totalSize === 0) {
         fileItem.status = STATUS.emptyfile.value;
         return;
     }
     // 文件MD5
     let md5FileUid = await computeMd5(fileItem);
-    if (md5FileUid == null) {
+    if (md5FileUid === null) {
         return;
     }
-    uploadFile(md5FileUid);
+    await uploadFile(md5FileUid);
 };
 defineExpose({addFile});
 
@@ -206,7 +201,7 @@ const startUpload = (uid) => {
     currentFile.pause = false;
     uploadFile(uid, currentFile.chunkIndex);
 };
-//暂停上传
+// 暂停上传
 const pauseUpload = (uid) => {
     let currentFile = getFileByUid(uid);
     currentFile.pause = true;
@@ -219,50 +214,41 @@ const delUpload = (uid, index) => {
 
 // 计算MD5
 const computeMd5 = (fileItem) => {
+    console.log(fileItem);
     let file = fileItem.file;
-    let blobSlice =
-        File.prototype.slice ||
-        File.prototype.mozSlice ||
-        File.prototype.webkitSlice;
     let chunks = Math.ceil(file.size / chunkSize);
     let currentChunk = 0;
     let spark = new SparkMD5.ArrayBuffer();
     let fileReader = new FileReader();
-    let time = new Date().getTime();
 
     let loadNext = () => {
-        let start = currentChunk * chunkSize;
-        let end = start + chunkSize >= file.size ? file.size : start + chunkSize;
-        fileReader.readAsArrayBuffer(blobSlice.call(file, start, end));
+        let start = currentChunk * chunkSize;       // 当前分片开始位置
+        let end = start + chunkSize >= file.size ? file.size : start + chunkSize;   // 当前分片结束位置
+        fileReader.readAsArrayBuffer(file.slice(start, end));
     };
     loadNext();
 
     return new Promise((resolve, reject) => {
-        let resultFile = getFileByUid(file.uid);
+        let resultFile = getFileByUid(file.uid);    // 修改resultFile，就相当于修改了当前file
         fileReader.onload = (e) => {
             spark.append(e.target.result);
             currentChunk++;
             if (currentChunk < chunks) {
-                console.log(
-                    `第${ file.name }, ${ currentChunk }分片解析完成, 开始第${
-                        currentChunk + 1
-                    }`
-                );
-                let percent = Math.floor((currentChunk / chunks) * 100);
-                resultFile.md5Progress = percent;
+                console.log(currentChunk);
+                resultFile.md5Progress = Math.floor((currentChunk / chunks) * 100);   // 更新MD5计算进度
                 loadNext();
             } else {
-                let md5 = spark.end();
+                let md5 = spark.end(false);
                 spark.destroy();
-                resultFile.md5Progress = 100;
-                resultFile.status = STATUS.uploading.value;
-                resultFile.md5 = md5;
+                resultFile.md5Progress = 100;   // 更新MD5计算进度为100%
+                resultFile.status = STATUS.uploading.value; // 更新文件状态为上传中
+                resultFile.md5 = md5;   // 存储计算得到的MD5值
                 resolve(fileItem.uid);
             }
         };
         fileReader.onerror = () => {
-            resultFile.md5Progress = -1;
-            resultFile.status = STATUS.fail.value;
+            resultFile.md5Progress = -1;    // 更新MD5计算失败的状态
+            resultFile.status = STATUS.fail.value;  // 更新文件状态为上传失败
             resolve(fileItem.uid);
         };
     }).catch((error) => {
@@ -270,12 +256,11 @@ const computeMd5 = (fileItem) => {
     });
 };
 
-// 获取文件
+// 获取文件，返回file对象
 const getFileByUid = (uid) => {
-    let file = fileList.value.find((item) => {
+    return fileList.value.find((item) => {
         return item.file.uid === uid;
     });
-    return file;
 };
 
 const emit = defineEmits(['uploadCallback']);
@@ -288,7 +273,7 @@ const uploadFile = async (uid, chunkIndex) => {
     const chunks = Math.ceil(fileSize / chunkSize);
     for (let i = chunkIndex; i < chunks; i++) {
         let delIndex = delList.value.indexOf(uid);
-        if (delIndex != -1) {
+        if (delIndex !== -1) {
             delList.value.splice(delIndex, 1);
             break;
         }
@@ -296,7 +281,6 @@ const uploadFile = async (uid, chunkIndex) => {
         if (currentFile.pause) {
             break;
         }
-        ;
         let start = i * chunkSize;
         let end = start + chunkSize >= fileSize ? fileSize : start + chunkSize;
         let chunkFile = file.slice(start, end);
@@ -336,8 +320,8 @@ const uploadFile = async (uid, chunkIndex) => {
         currentFile.status = STATUS[updateResult.data.status].value;
         currentFile.chunkIndex = i;
         if (
-            updateResult.data.status == STATUS.upload_seconds.value ||
-            updateResult.data.status == STATUS.upload_finish.value
+            updateResult.data.status === STATUS.upload_seconds.value ||
+            updateResult.data.status === STATUS.upload_finish.value
         ) {
             currentFile.uploadProgress = 100;
             emit('uploadCallback');
@@ -352,7 +336,7 @@ const uploadFile = async (uid, chunkIndex) => {
     .uploader-title {
         border-bottom: 1px solid #ddd;
         line-height: 40px;
-        padding: 0px 10px;
+        padding: 0 10px;
         font-size: 15px;
 
         .tips {
@@ -363,7 +347,7 @@ const uploadFile = async (uid, chunkIndex) => {
 
     .file-list {
         overflow: auto;
-        padding: 10px 0px;
+        padding: 10px 0;
         min-height: calc(100vh / 2);
         max-height: calc(100vh - 120px);
 

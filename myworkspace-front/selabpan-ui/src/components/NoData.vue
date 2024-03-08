@@ -10,8 +10,8 @@
 <script setup>
 const props = defineProps({
     msg: {
-        type: String,
-    },
+        type: String
+    }
 });
 </script>
 
@@ -19,10 +19,12 @@ const props = defineProps({
 .no-data {
     text-align: center;
     padding: 10px 0px;
+
     .icon-empty {
         font-size: 50px;
         color: #bbb;
     }
+
     .msg {
         margin-top: 10px;
         color: #909399;
