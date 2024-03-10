@@ -73,10 +73,8 @@
                             </template>
                             <template v-else>
                                 <Icon
-                                    v-if="row.folderType === 0"
                                     :fileType="row.fileType"
                                 />
-                                <Icon v-if="row.folderType === 1" :fileType="0"/>
                             </template>
                             <span class="file-name" :title="row.fileName">
                                 <span @click="preview(row)">{{ row.fileName }}</span>
@@ -245,38 +243,39 @@ const download = async (row) => {
     window.location.href = api.download + '/' + result.data;
 };
 
-// 保存到我的网盘
-const save2MyPanFileIdArray = [];
+// 保存到我的网盘（多/单）
+const saveMyPanFileIdArray = [];
 const saveMyPan = () => {
     if (selectIdList.value.length === 0) {
         return;
     }
     if (!proxy.VueCookies.get('userInfo')) {
+        // 在登录后回来
         router.push('/login?redirectUrl=' + route.path);
         return;
     }
-    save2MyPanFileIdArray.value = selectIdList.value;
+    saveMyPanFileIdArray.value = selectIdList.value;
     // 保存
-    save2MyPanDone();
+    saveMyPanDone();
 };
 
-// 页面中保存网盘
+// 页面中保存网盘（单）
 const saveMyPanSingle = (row) => {
     if (!proxy.VueCookies.get('userInfo')) {
         router.push('/login?redirectUrl=' + route.path);
         return;
     }
-    save2MyPanFileIdArray.value = [row.fileId];
-    save2MyPanDone();
+    saveMyPanFileIdArray.value = [row.fileId];
+    saveMyPanDone();
 };
 
-// 最后的保存网盘按钮
-const save2MyPanDone = async () => {
+// 最后的保存网盘操作
+const saveMyPanDone = async () => {
     let result = await proxy.Request({
         url: api.saveShare,
         params: {
             shareId: shareId,
-            shareFileIds: save2MyPanFileIdArray.value.join(','),
+            shareFileIds: saveMyPanFileIdArray.value.join(','),
             myFolderId: 0
         }
     });

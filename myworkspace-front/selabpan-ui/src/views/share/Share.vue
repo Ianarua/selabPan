@@ -6,7 +6,7 @@
                 :disabled="selectIdList.length === 0"
                 @click="cancelShareBatch"
             >
-                <span class="iconfont icon-cancel"></span>
+                <span class="iconfont icon-cancel"/>
                 取消分享
             </el-button>
         </div>
@@ -32,7 +32,7 @@
                             <Icon :cover="row.fileCover"></Icon>
                         </template>
                         <template v-else>
-                            <Icon v-if="row.folderType === 0" :fileType="row.fileType"></Icon>
+                            <Icon :fileType="row.fileType"></Icon>
                         </template>
                         <span class="file-name" :title="row.fileName">
                             {{ row.fileName }}
@@ -90,12 +90,6 @@ const columns = [
         width: 200
     }
 ];
-
-// 搜索
-const search = () => {
-    showLoading.value = true;
-    loadDataList();
-};
 
 const tableData = ref({});
 const tableOptions = {

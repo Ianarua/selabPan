@@ -59,7 +59,7 @@
                             <Icon :cover="row.fileCover" :width="32"/>
                         </template>
                         <template v-else>
-                            <Icon v-if="row.folderType === 0" :fileType="row.fileType"/>
+                            <Icon :fileType="row.fileType"/>
                         </template>
                         <span class="file-name" v-if="!row.showEdit" :title="row.fileName">
                             <span @click="preview(row)">{{ row.fileName }}</span>
@@ -89,7 +89,6 @@
                                 <span class="iconfont icon-share1" @click="share(row)">分享</span>
                                 <span
                                     class="iconfont icon-download"
-                                    v-if="row.folderType === 0"
                                     @click="download(row)"
                                 >
                                     下载
@@ -135,7 +134,7 @@
 <script setup>
 import CategoryInfo from '@/js/CategoryInfo.js';
 import ShareFile from './ShareFile.vue';
-import { ref, getCurrentInstance, nextTick, computed, watch, onMounted } from 'vue';
+import { ref, getCurrentInstance, nextTick, computed, watch } from 'vue';
 import { useRoute } from 'vue-router';
 
 const {proxy} = getCurrentInstance();
@@ -289,19 +288,16 @@ const editFileName = (index) => {
     });
     let currentData = tableData.value.list[index];
     currentData.showEdit = true;
-    // 编辑文件
-    if (currentData.folderType === 0) {
-        currentData.fileNameReal = currentData.fileName.substring(
-            0,
-            currentData.fileName.indexOf('.')
-        );
-        currentData.fileSuffix = currentData.fileName.substring(
-            currentData.fileName.indexOf('.')
-        );
-    } else {
-        currentData.fileNameReal = currentData.fileName;
-        currentData.fileSuffix = '';
-    }
+    // 编辑文件名
+    console.log(123321);
+    currentData.fileNameReal = currentData.fileName.substring(
+        0,
+        currentData.fileName.indexOf('.')
+    );
+    currentData.fileSuffix = currentData.fileName.substring(
+        currentData.fileName.indexOf('.')
+    );
+
     editing.value = true;
     nextTick(() => {
         editNameRef.value.focus();

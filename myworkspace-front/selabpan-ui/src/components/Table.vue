@@ -4,11 +4,8 @@
             ref="dataTable"
             :data="dataSource.list || []"
             :height="tableHeight"
-            :stripe="options.stripe"
-            :border="options.border"
             header-row-class-name="table-header-row"
             highlight-current-row
-            @row-click="handleRowClick"
             @selection-change="handleSelectionChange"
         >
             <!-- selection选择框 -->
@@ -75,9 +72,9 @@
     </div>
 </template>
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 
-const emit = defineEmits(['rowSelected', 'rowClick']);
+const emit = defineEmits(['rowSelected']);
 const props = defineProps({
     dataSource: Object,
     showPagination: {
@@ -103,19 +100,16 @@ const props = defineProps({
     }
 });
 
+console.log('props', props);
+
+// 分页布局
 const layout = computed(() => {
-    return `total, ${
-        props.showPageSize ? 'sizes' : ''
-    }, prev, pager, next, jumper`;
+    return `total, ${ props.showPageSize ? 'sizes' : '' }, prev, pager, next, jumper`;
 });
+
 // 顶部 60 , 内容区域距离顶部 20, 内容上下内间距 15*2 分页区域高度 46
 const topHeight = 60 + 20 + 30 + 46;
-
-const tableHeight = ref(
-    props.options.tableHeight
-        ? props.options.tableHeight
-        : window.innerHeight - topHeight - props.options.extHeight
-);
+const tableHeight = ref(props.options.tableHeight || window.innerHeight - topHeight - props.options.extHeight);
 
 // 初始化
 const init = () => {
@@ -123,7 +117,7 @@ const init = () => {
         props.fetch();
     }
 };
-init();
+onMounted(() => init());
 
 const dataTable = ref();
 // 清除选中
@@ -141,10 +135,6 @@ const setCurrentRow = (rowKey, rowValue) => {
 // 将子组件暴露出去, 否则父组件无法调用
 defineExpose({setCurrentRow, clearSelection});
 
-// 行点击
-const handleRowClick = (row) => {
-    emit('rowClick', row);
-};
 
 // 多选
 const handleSelectionChange = (row) => {
@@ -163,6 +153,7 @@ const handlePageNoChange = (pageNo) => {
     props.fetch();
 };
 </script>
+
 <style lang="scss" scoped>
 .pagination {
     padding-top: 10px;
@@ -174,6 +165,6 @@ const handlePageNoChange = (pageNo) => {
 }
 
 :deep(.el-table__cell) {
-    padding: 4px 0px;
+    padding: 4px 0;
 }
 </style>

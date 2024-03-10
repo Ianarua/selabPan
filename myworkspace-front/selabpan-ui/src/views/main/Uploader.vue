@@ -26,7 +26,7 @@
                         <span
                             :class="['iconfont', 'icon-' + STATUS[item.status].icon]"
                             :style="{ color: STATUS[item.status].color }"
-                        ></span>
+                        />
                         <!-- 状态描述 -->
                         <span class="status" :style="{ color: STATUS[item.status].color }">
                           {{ item.status === 'fail' ? item.errorMsg : STATUS[item.status].desc }}
@@ -93,7 +93,7 @@
                 </div>
             </div>
             <div v-if="fileList.length === 0">
-                <NoData msg="暂无上传任务"></NoData>
+                <NoData msg="暂无上传任务"/>
             </div>
         </div>
     </div>

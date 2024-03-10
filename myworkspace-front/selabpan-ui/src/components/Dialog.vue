@@ -15,11 +15,11 @@
                 class="dialog-body"
                 :style="{ 'max-height': maxHeight + 'px', padding: padding + 'px' }"
             >
-                <slot></slot>
+                <slot/>
             </div>
             <template v-if="(buttons && buttons.length > 0) || showCancel">
                 <div class="dialog-footer">
-                    <el-button link @click="close" v-if="showCancel"> 取消</el-button>
+                    <el-button link @click="close" v-if="showCancel">取消</el-button>
                     <el-button
                         class="dialog-buttons"
                         v-for="btn in buttons"
