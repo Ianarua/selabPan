@@ -2,7 +2,6 @@
     <div class="share">
         <div class="body-content">
             <div class="logo">
-                <span class="iconfont icon-pan"></span>
                 <span class="name">Selab云盘</span>
             </div>
             <div class="code-panel">
@@ -12,7 +11,7 @@
                             :userId="shareInfo.userId"
                             :avatar="shareInfo.avatar"
                             :width="50"
-                        ></Avatar>
+                        />
                     </div>
                     <div class="share-info">
                         <div class="user-info">
@@ -38,11 +37,8 @@
                                     clearable
                                     v-model.trim="formData.code"
                                     @keyup.enter="checkShare"
-                                ></el-input>
-                                <el-button class="get-btn" type="primary" @click="checkShare"
-                                >提取文件
-                                </el-button
-                                >
+                                />
+                                <el-button class="get-btn" type="primary" @click="checkShare">提取文件</el-button>
                             </el-form-item>
                         </el-form>
                     </div>
@@ -53,7 +49,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, getCurrentInstance, nextTick } from 'vue';
+import { ref, getCurrentInstance } from 'vue';
 
 const {proxy} = getCurrentInstance();
 import { useRouter, useRoute } from 'vue-router';
@@ -109,7 +105,7 @@ const checkShare = async () => {
         if (!result) {
             return;
         }
-        router.push(`/share/${ shareId }`);
+        await router.push(`/share/${ shareId }`);
     });
 };
 </script>
@@ -117,10 +113,7 @@ const checkShare = async () => {
 <style lang="scss" scoped>
 .share {
     height: calc(100vh);
-    background: url('../../assets/share_bg.png');
-    background-repeat: repeat-x;
-    background-position: 0 bottom;
-    background-color: #eef2f6;
+    background: #eef2f6 url('../../assets/share_bg.png') repeat-x 0 bottom;
     display: flex;
     justify-content: center;
 
@@ -182,7 +175,7 @@ const checkShare = async () => {
 
             .file-info {
                 padding: 10px 20px;
-                background: #01f7ff;
+                background: rgba(4, 140, 252, 0.63);
                 color: #fff;
                 display: flex;
                 align-items: center;

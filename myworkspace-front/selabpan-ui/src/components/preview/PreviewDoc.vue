@@ -1,10 +1,10 @@
 <template>
-    <div ref="docRef" class="doc-content"></div>
+    <div ref="docRef" class="doc-content"/>
 </template>
 
 <script setup>
 import * as docx from 'docx-preview';
-import { ref, reactive, getCurrentInstance, nextTick, onMounted } from 'vue';
+import { ref, getCurrentInstance, onMounted } from 'vue';
 
 const {proxy} = getCurrentInstance();
 
@@ -15,7 +15,8 @@ const props = defineProps({
 });
 
 const docRef = ref();
-const initDoc = async () => {
+
+onMounted(async () => {
     let result = await proxy.Request({
         url: props.url,
         responseType: 'blob'
@@ -23,24 +24,21 @@ const initDoc = async () => {
     if (!result) {
         return;
     }
-    docx.renderAsync(result, docRef.value);
-};
-onMounted(() => {
-    initDoc();
+    await docx.renderAsync(result, docRef.value);
 });
 </script>
 
 <style lang="scss" scoped>
 .doc-content {
-    margin: 0px auto;
+    margin: 0 auto;
 
     :deep(.docx-wrapper) {
         background: #fff;
-        padding: 10px 0px;
+        padding: 10px 0;
     }
 
     :deep .docx-wrapper > section.docx {
-        margin-bottom: 0px;
+        margin-bottom: 0;
     }
 }
 </style>

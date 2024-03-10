@@ -3,15 +3,14 @@
         <div class="header">
             <div class="header-content">
                 <div class="logo" @click="jump">
-                    <span class="iconfont icon-pan"></span>
                     <span class="name">Selab云盘</span>
                 </div>
             </div>
         </div>
     </div>
     <div class="share-body">
-        <template v-if="Object.keys(shareInfo).length == 0">
-            <div class="loading" v-loading="Object.keys(shareInfo).length == 0"></div>
+        <template v-if="Object.keys(shareInfo).length === 0">
+            <div class="loading" v-loading="Object.keys(shareInfo).length === 0"></div>
         </template>
         <template v-else>
             <div class="share-panel">
@@ -21,7 +20,7 @@
                             :userId="shareInfo.userId"
                             :avatar="shareInfo.avatar"
                             :width="50"
-                        ></Avatar>
+                        />
                     </div>
                     <div class="share-info">
                         <div class="user-info">
@@ -39,25 +38,18 @@
                     >
                         <span class="iconfont icon-cancel"></span>
                         取消分享
-                    </el-button
-                    >
+                    </el-button>
                     <el-button
                         v-else
                         type="primary"
-                        @click="save2MyPan"
-                        :disabled="selectIdList.length == 0"
+                        @click="saveMyPan"
+                        :disabled="selectIdList.length === 0"
                     >
                         <span class="iconfont icon-import"></span>
                         保存到我的网盘
-                    </el-button
-                    >
+                    </el-button>
                 </div>
             </div>
-            <Navigation
-                ref="navigationRef"
-                @navChange="navChange"
-                :shareId="shareId"
-            ></Navigation>
             <div class="file-list">
                 <Table
                     ref="dataTableRef"
@@ -75,57 +67,50 @@
                             @mouseleave="cancelShowOp(row)"
                         >
                             <template
-                                v-if="
-                (row.fileType == 3 || row.fileType == 1) && row.status == 2
-              "
+                                v-if="(row.fileType === 3 || row.fileType === 1) && row.status === 2"
                             >
-                                <Icon :cover="row.fileCover" :width="32"></Icon>
+                                <Icon :cover="row.fileCover" :width="32"/>
                             </template>
                             <template v-else>
                                 <Icon
-                                    v-if="row.folderType == 0"
+                                    v-if="row.folderType === 0"
                                     :fileType="row.fileType"
-                                ></Icon>
-                                <Icon v-if="row.folderType == 1" :fileType="0"></Icon>
+                                />
+                                <Icon v-if="row.folderType === 1" :fileType="0"/>
                             </template>
                             <span class="file-name" :title="row.fileName">
-                <span @click="preview(row)">{{ row.fileName }}</span>
-              </span>
+                                <span @click="preview(row)">{{ row.fileName }}</span>
+                            </span>
                             <span class="op">
-                <span
-                    class="iconfont icon-download"
-                    v-if="row.folderType == 0"
-                    @click="download(row)"
-                >下载</span
-                >
-                <span
-                    class="iconfont icon-import"
-                    @click="save2MyPanSingle(row)"
-                    v-if="row.showOp && !shareInfo.currentUser"
-                >保存到我的网盘</span
-                >
-                </span>
+                                <span
+                                    class="iconfont icon-download"
+                                    v-if="row.folderType === 0"
+                                    @click="download(row)"
+                                >
+                                    下载
+                                </span>
+                                <span
+                                    class="iconfont icon-import"
+                                    @click="saveMyPanSingle(row)"
+                                    v-if="row.showOp && !shareInfo.currentUser"
+                                >
+                                    保存到网盘
+                                </span>
+                            </span>
                         </div>
                     </template>
                     <template #fileSize="{ index, row }">
-            <span v-if="row.fileSize">{{
-                    proxy.Utils.size2Str(row.fileSize)
-                }}</span>
+                        <span v-if="row.fileSize">{{ proxy.Utils.size2Str(row.fileSize) }}</span>
                     </template>
                 </Table>
             </div>
         </template>
-        <!-- 目录选择 -->
-        <FolderSelect
-            ref="folderSelectRef"
-            @folderSelect="save2MyPanDone"
-        ></FolderSelect>
-        <Preview ref="previewRef"></Preview>
+        <Preview ref="previewRef"/>
     </div>
 </template>
 
 <script setup>
-import { ref, reactive, getCurrentInstance, nextTick } from 'vue';
+import { ref, getCurrentInstance, watch } from 'vue';
 
 const {proxy} = getCurrentInstance();
 import { useRouter, useRoute } from 'vue-router';
@@ -156,7 +141,7 @@ const getShareInfo = async () => {
         return;
     }
     if (result.data == null) {
-        router.push(`/shareCheck/${ shareId }`);
+        await router.push(`/shareCheck/${ shareId }`);
         return;
     }
     shareInfo.value = result.data;
@@ -191,8 +176,7 @@ const loadDataList = async () => {
     let params = {
         pageNo: tableData.value.pageNo,
         pageSize: tableData.value.pageSize,
-        shareId: shareId,
-        filePid: currentFolder.value.fileId
+        shareId: shareId
     };
     let result = await proxy.Request({
         url: api.loadFileList,
@@ -224,28 +208,34 @@ const rowSelected = (rows) => {
     });
 };
 
-const currentFolder = ref({fileId: '0'});
-const navChange = (data) => {
-    const {curFolder} = data;
-    currentFolder.value = curFolder;
+let category = ref('');
+
+// 初始化
+const init = () => {
     loadDataList();
 };
 
+watch(
+    () => route,
+    (newVal, oldVal) => {
+        console.log(1);
+        category.value = newVal.params.category;
+        init();
+    },
+    {immediate: true, deep: true}
+);
+
 // 预览, 查看
 const previewRef = ref();
-const navigationRef = ref();
 
 const preview = (data) => {
-    if (data.folderType == 1) {
-        navigationRef.value.openFolder(data);
-        return;
-    }
     data.shareId = shareId;
     previewRef.value.showPreview(data, 2);
 };
 
 // 下载文件
 const download = async (row) => {
+    console.log(row);
     let result = await proxy.Request({
         url: api.createDownloadUrl + '/' + shareId + '/' + row.fileId
     });
@@ -256,10 +246,9 @@ const download = async (row) => {
 };
 
 // 保存到我的网盘
-const folderSelectRef = ref();
 const save2MyPanFileIdArray = [];
-const save2MyPan = () => {
-    if (selectIdList.value.length == 0) {
+const saveMyPan = () => {
+    if (selectIdList.value.length === 0) {
         return;
     }
     if (!proxy.VueCookies.get('userInfo')) {
@@ -267,33 +256,35 @@ const save2MyPan = () => {
         return;
     }
     save2MyPanFileIdArray.value = selectIdList.value;
-    folderSelectRef.value.showFolderDialog();
+    // 保存
+    save2MyPanDone();
 };
 
-const save2MyPanSingle = (row) => {
+// 页面中保存网盘
+const saveMyPanSingle = (row) => {
     if (!proxy.VueCookies.get('userInfo')) {
         router.push('/login?redirectUrl=' + route.path);
         return;
     }
     save2MyPanFileIdArray.value = [row.fileId];
-    folderSelectRef.value.showFolderDialog();
+    save2MyPanDone();
 };
 
-const save2MyPanDone = async (folderId) => {
+// 最后的保存网盘按钮
+const save2MyPanDone = async () => {
     let result = await proxy.Request({
         url: api.saveShare,
         params: {
             shareId: shareId,
             shareFileIds: save2MyPanFileIdArray.value.join(','),
-            myFolderId: folderId
+            myFolderId: 0
         }
     });
     if (!result) {
         return;
     }
-    loadDataList();
+    await loadDataList();
     proxy.Message.success('保存成功');
-    folderSelectRef.value.close();
 };
 
 // 取消分享
@@ -309,7 +300,7 @@ const cancelShare = () => {
             return;
         }
         proxy.Message.success('取消分享成功');
-        router.push('/');
+        await router.push('/');
     });
 };
 
@@ -324,12 +315,12 @@ const jump = () => {
 .header {
     width: 100%;
     position: fixed;
-    background: #f701ff;
+    background: rgba(4, 140, 252, 0.63);
     height: 50px;
 
     .header-content {
         width: 70%;
-        margin: 0px auto;
+        margin: 0 auto;
         color: #fff;
         line-height: 50px;
 

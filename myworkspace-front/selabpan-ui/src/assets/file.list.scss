@@ -38,7 +38,11 @@
             width: 0;
             overflow: hidden;
             text-overflow: ellipsis;
-            white-space: nowrap;
+
+
+            & > span:first-child {
+                white-space: nowrap;
+            }
 
             span {
                 cursor: pointer;
@@ -52,11 +56,18 @@
                 font-size: 13px;
                 margin-left: 10px;
                 color: #e6a23c;
+                z-index: 1000;
             }
+        }
+        .transfer-status {
+            font-size: 13px;
+            margin-left: 10px;
+            color: #e6a23c;
+            z-index: 1000;
+        }
 
-            .transfer-fail {
-                color: #f75000;
-            }
+        .transfer-fail {
+            color: #f75000;
         }
 
         .edit-panel {

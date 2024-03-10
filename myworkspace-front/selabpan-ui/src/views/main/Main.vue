@@ -38,8 +38,6 @@
                 </div>
                 <div class="iconfont icon-refresh" @click="loadDataList"></div>
             </div>
-            <!-- 文件列表 -->
-            <Navigation ref="navigationRef" @navChange="navChange"></Navigation>
         </div>
         <div class="file-list" v-if="tableData.list && tableData.list.length > 0">
             <Table
@@ -58,17 +56,16 @@
                         @mouseleave="cancelShowOp(row)"
                     >
                         <template v-if="(row.fileType === 3 || row.fileType === 1) && row.status === 2">
-                            <Icon :cover="row.fileCover" :width="32"></Icon>
+                            <Icon :cover="row.fileCover" :width="32"/>
                         </template>
                         <template v-else>
-                            <Icon v-if="row.folderType === 0" :fileType="row.fileType"></Icon>
-                            <Icon v-if="row.folderType === 1" :fileType="0"></Icon>
+                            <Icon v-if="row.folderType === 0" :fileType="row.fileType"/>
                         </template>
                         <span class="file-name" v-if="!row.showEdit" :title="row.fileName">
                             <span @click="preview(row)">{{ row.fileName }}</span>
                             <span v-if="row.status === 0" class="transfer-status">转码中</span>
-                            <span v-if="row.status === 1" class="transfer-status transfer-fail">转码失败</span>
                         </span>
+                        <span v-if="row.status === 1" class="transfer-status transfer-fail">转码失败</span>
                         <div class="edit-panel" v-if="row.showEdit">
                             <el-input
                                 v-model.trim="row.fileNameReal"
@@ -81,11 +78,11 @@
                             <span
                                 :class="['iconfont icon-right1', row.fileNameReal ? '' : 'not-allow']"
                                 @click="saveNameEdit(index)"
-                            ></span>
+                            />
                             <span
                                 class="iconfont icon-error"
                                 @click="cancelNameEdit(index)"
-                            ></span>
+                            />
                         </div>
                         <span class="op">
                             <template v-if="row.showOp && row.fileId && row.status === 2">
@@ -110,7 +107,7 @@
         </div>
         <div class="no-data" v-else>
             <div class="no-data-inner">
-                <Icon iconName="no_data" :width="120" fit="fill"></Icon>
+                <Icon iconName="no_data" :width="120" fit="fill"/>
                 <div class="tips">当前目录为空, 上传你的第一个文件吧</div>
                 <div class="op-list">
                     <el-upload
@@ -121,7 +118,7 @@
                         :accept="fileAccept"
                     >
                         <div class="op-item">
-                            <Icon iconName="file" :width="60"></Icon>
+                            <Icon iconName="file" :width="60"/>
                             <div>上传文件</div>
                         </div>
                     </el-upload>
@@ -129,23 +126,24 @@
             </div>
         </div>
         <!-- 预览 -->
-        <Preview ref="previewRef"></Preview>
+        <Preview ref="previewRef"/>
         <!-- 分享 -->
-        <ShareFile ref="shareRef"></ShareFile>
+        <ShareFile ref="shareRef"/>
     </div>
 </template>
 
 <script setup>
 import CategoryInfo from '@/js/CategoryInfo.js';
 import ShareFile from './ShareFile.vue';
-import { ref, getCurrentInstance, nextTick, computed } from 'vue';
+import { ref, getCurrentInstance, nextTick, computed, watch, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
 
 const {proxy} = getCurrentInstance();
 
 const emit = defineEmits(['addFile']);
 const addFile = (fileData) => {
     console.log('fileData', fileData);
-    emit('addFile', {file: fileData.file, filePid: currentFolder.value.fileId});
+    emit('addFile', {file: fileData.file, filePid: '0'});
 };
 
 // 添加文件回调
@@ -156,8 +154,6 @@ const reload = () => {
 defineExpose({
     reload
 });
-// 当前目录
-const currentFolder = ref({fileId: '0'});
 
 const api = {
     loadDataList: '/file/loadDataList',
@@ -214,7 +210,7 @@ const loadDataList = async () => {
         pageNo: tableData.value.pageNo,
         pageSize: tableData.value.pageSize,
         fileNameFuzzy: fileNameFuzzy.value,
-        filePid: currentFolder.value.fileId,
+        filePid: '0',
         category: category.value
     };
     if (params.category !== 'all') {
@@ -247,7 +243,7 @@ const cancelShowOp = (row) => {
 const editing = ref(false);
 const editNameRef = ref();
 
-// 新建文件夹
+// 重命名
 const cancelNameEdit = (index) => {
     const fileData = tableData.value.list[index];
     if (fileData.fileId) {
@@ -361,26 +357,21 @@ const delFileBatch = () => {
 };
 
 // 预览
-const navigationRef = ref();
 const previewRef = ref();
 const preview = (data) => {
-    // 目录
-    if (data.folderType === 1) {
-        navigationRef.value.openFolder(data);
+    if (data.status === 0) {
+        proxy.Message.warning('文件未完成转码, 无法预览');
         return;
     }
-    // 文件
-    if (data.status !== 2) {
-        proxy.Message.warning('文件未完成转码, 无法预览');
+    if (data.status === 1) {
+        proxy.Message.error('文件转码失败, 无法预览');
         return;
     }
     previewRef.value.showPreview(data, 0);
 };
 
 const navChange = (data) => {
-    const {categoryId, curFolder} = data;
-    currentFolder.value = curFolder;
-    category.value = categoryId;
+    category.value = data;
     loadDataList();
 };
 
@@ -400,6 +391,23 @@ const shareRef = ref();
 const share = (row) => {
     shareRef.value.show(row);
 };
+
+// 切换路由
+const route = useRoute();
+
+const init = () => {
+    navChange(category.value);
+
+};
+
+watch(
+    () => route,
+    (newVal, oldVal) => {
+        category.value = newVal.params.category;
+        init();
+    },
+    {immediate: true, deep: true}
+);
 </script>
 
 <style lang="scss" scoped>

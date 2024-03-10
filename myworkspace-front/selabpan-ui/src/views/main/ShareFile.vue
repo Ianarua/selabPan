@@ -20,7 +20,7 @@
                     {{ formData.fileName }}
                 </el-form-item>
                 <!-- 单选 -->
-                <template v-if="showType == 0">
+                <template v-if="showType === 0">
                     <el-form-item label="有效期" prop="validType">
                         <el-radio-group v-model="formData.validType">
                             <el-radio :label="0">1天</el-radio>
@@ -36,7 +36,7 @@
                         </el-radio-group>
                     </el-form-item>
                     <!-- 自定义提取码 -->
-                    <el-form-item prop="code" v-if="formData.codeType == 0">
+                    <el-form-item prop="code" v-if="formData.codeType === 0">
                         <el-input
                             clearable
                             placeholder="请输入5位提取码"

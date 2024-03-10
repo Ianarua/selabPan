@@ -5,7 +5,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, getCurrentInstance } from 'vue';
+import { getCurrentInstance } from 'vue';
 
 const {proxy} = getCurrentInstance();
 
@@ -52,7 +52,7 @@ const getImage = () => {
         icon = props.iconName;
     } else {
         const iconMap = fileTypeMap[props.fileType];
-        if (iconMap != undefined) {
+        if (iconMap !== undefined) {
             icon = iconMap['icon'];
         }
     }

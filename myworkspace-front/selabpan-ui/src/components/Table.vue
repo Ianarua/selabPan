@@ -41,8 +41,7 @@
                                 :name="column.scopedSlots"
                                 :index="scope.$index"
                                 :row="scope.row"
-                            >
-                            </slot>
+                            />
                         </template>
                     </el-table-column>
                 </template>
@@ -71,7 +70,7 @@
                 @size-change="handlePageSizeChange"
                 @current-change="handlePageNoChange"
                 style="text-align: right"
-            ></el-pagination>
+            />
         </div>
     </div>
 </template>

@@ -2,41 +2,40 @@
     <PreviewImage
         ref="imageViewRef"
         :imageList="[imageUrl]"
-        v-if="fileInfo.fileCategory === 3"
-    >
-    </PreviewImage>
+        v-if="fileInfo.fileType === 3"
+    />
     <Window
         :show="windowShow"
         @close="closeWindow"
-        :width="fileInfo.fileCategory === 1 ? 1500 : 900"
+        :width="fileInfo.fileType === 1 ? 1500 : 900"
         :title="fileInfo.fileName"
-        :align="fileInfo.fileCategory === 1 ? 'center' : 'top'"
+        :align="fileInfo.fileType === 1 ? 'center' : 'top'"
         v-else
     >
-        <PreviewVideo :url="url" v-if="fileInfo.fileCategory === 1"></PreviewVideo>
-        <PreviewDoc :url="url" v-if="fileInfo.fileType === 5"></PreviewDoc>
-        <PreviewExcel :url="url" v-if="fileInfo.fileType === 6"></PreviewExcel>
-        <PreviewPdf :url="url" v-if="fileInfo.fileType === 4"></PreviewPdf>
-        <PreviewTxt
-            :url="url"
-            v-if="fileInfo.fileType === 7 || fileInfo.fileType === 8"
-        ></PreviewTxt>
+        <PreviewVideo :url="url" v-if="fileInfo.fileType === 1"/>
         <PreviewMusic
             :url="url"
             :fileName="fileInfo.fileName"
-            v-if="fileInfo.fileCategory === 2"
-        ></PreviewMusic>
-
+            v-if="fileInfo.fileType === 2"
+        />
+        <PreviewPdf :url="url" v-if="fileInfo.fileType === 4"/>
+        <PreviewDoc :url="url" v-if="fileInfo.fileType === 5"/>
+        <PreviewExcel :url="url" v-if="fileInfo.fileType === 6"/>
+        <PreviewTxt
+            :url="url"
+            v-if="fileInfo.fileType === 7 || fileInfo.fileType === 8"
+        />
         <PreviewDownload
             :createDownloadUrl="createDownloadUrl"
             :downloadUrl="downloadUrl"
             :fileInfo="fileInfo"
             v-if="fileInfo.fileCategory === 5 && fileInfo.fileType !== 8"
-        ></PreviewDownload>
+        />
     </Window>
 </template>
 
 <script setup>
+import PreviewImage from './PreviewImage.vue';
 import PreviewVideo from '@/components/preview/PreviewVideo.vue';
 import PreviewDoc from '@/components/preview/PreviewDoc.vue';
 import PreviewExcel from '@/components/preview/PreviewExcel.vue';
@@ -45,11 +44,9 @@ import PreviewTxt from '@/components/preview/PreviewTxt.vue';
 import PreviewMusic from '@/components/preview/PreviewMusic.vue';
 import PreviewDownload from '@/components/preview/PreviewDownload.vue';
 
-import { ref, reactive, getCurrentInstance, computed, nextTick } from 'vue';
+import { ref, reactive, getCurrentInstance, computed, nextTick, onMounted } from 'vue';
 
 const {proxy} = getCurrentInstance();
-import PreviewImage from './PreviewImage.vue';
-
 const imageUrl = computed(() => {
     return (
         proxy.globalInfo.imageUrl + fileInfo.value.fileCover.replaceAll('_.', '.')
@@ -89,8 +86,9 @@ const downloadUrl = ref(null);
 const fileInfo = ref({});
 const imageViewRef = ref();
 const showPreview = (data, showPart) => {
+    console.log(data, showPart);
     fileInfo.value = data;
-    if (data.fileCategory === 3) {
+    if (data.fileType === 3) {
         nextTick(() => {
             imageViewRef.value.show(0);
         });
@@ -100,20 +98,18 @@ const showPreview = (data, showPart) => {
         let _createDownloadUrl = FILE_URL_MAP[showPart].createDownloadUrl;
         let _downloadUrl = FILE_URL_MAP[showPart].downloadUrl;
 
-        if (data.fileCategory === 1) {
+        if (data.fileType === 1) {
             _url = FILE_URL_MAP[showPart].videoUrl;
         }
         if (showPart === 0) {
-            _url = _url + '/' + data.fileId;
-            _createDownloadUrl = _createDownloadUrl + '/' + data.fileId;
+            _url += '/' + data.fileId;
+            _createDownloadUrl += '/' + data.fileId;
         } else if (showPart === 1) {
-            _url = _url + '/' + data.userId + '/' + data.fileId;
-            _createDownloadUrl =
-                _createDownloadUrl + '/' + data.userId + '/' + data.fileId;
+            _url += '/' + data.userId + '/' + data.fileId;
+            _createDownloadUrl += '/' + data.userId + '/' + data.fileId;
         } else if (showPart === 2) {
-            _url = _url + '/' + data.shareId + '/' + data.fileId;
-            _createDownloadUrl =
-                _createDownloadUrl + '/' + data.shareId + '/' + data.fileId;
+            _url += '/' + data.shareId + '/' + data.fileId;
+            _createDownloadUrl += '/' + data.shareId + '/' + data.fileId;
         }
         url.value = _url;
         createDownloadUrl.value = _createDownloadUrl;
@@ -122,6 +118,32 @@ const showPreview = (data, showPart) => {
 };
 
 defineExpose({showPreview});
+
+/*
+    fileCategory: 文件类别，用于区分不同类型的文件
+        0: 普通文件
+        1: 视频（视频）
+        2: 音频（音乐）
+        3: 图片（图片）
+        4: 文档（PDF、txt、docx、excel）
+        5: 其他、需要下载（zip、md不下、ppt）
+    fileType: 文件类型，表示文件的具体类型，可能的取值取决于不同的文件类别
+        0: 未定义的文件类型
+        1: 视频文件（视频）
+        2: 音乐文件（音乐）
+        3: 图片文件（图片）
+        4: PDF 文件（PDF）
+        5: 文档文件（docx）
+        6: Excel 文件（excel）
+        7: 文本文件（txt）
+        8: 其他文件类型（md）
+        10: 需要下载文件（zip、ppt）
+    fileId: 文件的唯一标识符
+    fileName: 文件名
+    fileCover: 文件封面图的 URL
+    userId: 用户 ID
+    shareId: 分享 ID
+ */
 </script>
 
 <style lang="scss" scoped>

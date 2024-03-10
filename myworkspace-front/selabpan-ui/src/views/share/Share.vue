@@ -8,8 +8,7 @@
             >
                 <span class="iconfont icon-cancel"></span>
                 取消分享
-            </el-button
-            >
+            </el-button>
         </div>
         <div class="file-list">
             <Table
@@ -28,25 +27,22 @@
                         @mouseleave="cancelShowOp(row)"
                     >
                         <template
-                            v-if="
-                  (row.fileType === 3 || row.fileType === 1) && row.status !== 0
-                "
+                            v-if="(row.fileType === 3 || row.fileType === 1) && row.status !== 0"
                         >
                             <Icon :cover="row.fileCover"></Icon>
                         </template>
                         <template v-else>
                             <Icon v-if="row.folderType === 0" :fileType="row.fileType"></Icon>
-                            <Icon v-if="row.folderType === 1" :fileType="0"></Icon>
                         </template>
                         <span class="file-name" :title="row.fileName">
                             {{ row.fileName }}
                         </span>
                         <span class="op">
-                <template v-if="row.showOp">
-                    <span class="iconfont icon-link" @click="copy(row)">复制链接</span>
-                    <span class="iconfont icon-cancel" @click="cancelShare(row)">取消分享</span>
-                </template>
-              </span>
+                            <template v-if="row.showOp">
+                                <span class="iconfont icon-link" @click="copy(row)">复制链接</span>
+                                <span class="iconfont icon-cancel" @click="cancelShare(row)">取消分享</span>
+                            </template>
+                        </span>
                     </div>
                 </template>
                 <template #expireTime="{ index, row }">
@@ -62,7 +58,7 @@ import useClipboard from 'vue-clipboard3';
 
 const {toClipboard} = useClipboard();
 
-import { ref, reactive, getCurrentInstance, nextTick } from 'vue';
+import { ref, getCurrentInstance } from 'vue';
 
 const {proxy} = getCurrentInstance();
 

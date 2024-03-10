@@ -346,11 +346,6 @@ onMounted(() => {
         display: flex;
         align-items: center;
 
-        .icon-pan {
-            font-size: 40px;
-            color: #f701ff;
-        }
-
         .name {
             font-weight: bold;
             margin-left: 5px;

@@ -1,20 +1,20 @@
 <template>
     <div class="window" v-if="show">
-        <div class="window-mask" @click="close" v-if="show"></div>
+        <div class="window-mask" @click="close" v-if="show"/>
         <div class="close" @click="close">
-            <span class="iconfont icon-close2"></span>
+            <span class="iconfont icon-close2"/>
         </div>
         <div
             class="window-content"
             :style="{
-            top: '0px',
-            left: windowContentLeft + 'px',
-            width:windowContentWidth + 'px',
-          }"
+                top: '0px',
+                left: windowContentLeft + 'px',
+                width: windowContentWidth + 'px',
+            }"
         >
             <div class="title">{{ title }}</div>
-            <div class="content-body" :style="{ 'align-items' : 'align' }">
-                <slot></slot>
+            <div class="content-body" :style="{ 'align-items' : align }">
+                <slot/>
             </div>
         </div>
     </div>
@@ -72,8 +72,8 @@ onUnmounted(() => {
 <style lang="scss" scoped>
 .window {
     .window-mask {
-        top: 0px;
-        left: 0px;
+        top: 0;
+        left: 0;
         width: 100%;
         height: calc(100vh);
         z-index: 200;
@@ -104,7 +104,7 @@ onUnmounted(() => {
     }
 
     .window-content {
-        top: 0px;
+        top: 0;
         z-index: 201;
         position: absolute;
         background: #fff;

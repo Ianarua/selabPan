@@ -6,19 +6,16 @@
                 :disabled="selectIdList.length === 0"
                 @click="revertBatch"
             >
-                <span class="iconfont icon-revert"></span>
+                <span class="iconfont icon-revert"/>
                 还原
-            </el-button
-            >
+            </el-button>
             <el-button
                 type="danger"
                 :disabled="selectIdList.length === 0"
-                @click="delBatch"
-            >
-                <span class="iconfont icon-del"></span>
+                @click="delBatch">
+                <span class="iconfont icon-del"/>
                 批量删除
-            </el-button
-            >
+            </el-button>
         </div>
         <div class="file-list">
             <Table
@@ -34,38 +31,27 @@
                     <div
                         class="file-item"
                         @mouseenter="showOp(row)"
-                        @mouseleave="cancelShowOp(row)"
-                    >
+                        @mouseleave="cancelShowOp(row)">
                         <template
-                            v-if="
-                (row.fileType === 3 || row.fileType === 1) && row.status !== 0
-              "
+                            v-if="(row.fileType === 3 || row.fileType === 1) && row.status !== 0"
                         >
-                            <Icon :cover="row.fileCover"></Icon>
+                            <Icon :cover="row.fileCover"/>
                         </template>
                         <template v-else>
-                            <Icon v-if="row.folderType === 0" :fileType="row.fileType"></Icon>
-                            <Icon v-if="row.folderType === 1" :fileType="0"></Icon>
+                            <Icon v-if="row.folderType === 0" :fileType="row.fileType"/>
+                            <Icon v-if="row.folderType === 1" :fileType="0"/>
                         </template>
-                        <span class="file-name" :title="row.fileName">{{
-                                row.fileName
-                            }}</span>
+                        <span class="file-name" :title="row.fileName">{{ row.fileName }}</span>
                         <span class="op">
-              <template v-if="row.showOp">
-                <span class="iconfont icon-link" @click="revert(row)"
-                >还原</span
-                >
-                <span class="iconfont icon-cancel" @click="delFile(row)"
-                >删除</span
-                >
-              </template>
-            </span>
+                            <template v-if="row.showOp">
+                            <span class="iconfont icon-link" @click="revert(row)">还原</span>
+                            <span class="iconfont icon-cancel" @click="delFile(row)">删除</span>
+                          </template>
+                        </span>
                     </div>
                 </template>
                 <template #fileSize="{ index, row }">
-          <span v-if="row.fileSize">
-            {{ proxy.Utils.size2Str(row.fileSize) }}
-          </span>
+                    <span v-if="row.fileSize">{{ proxy.Utils.size2Str(row.fileSize) }}</span>
                 </template>
             </Table>
         </div>
@@ -73,7 +59,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, getCurrentInstance, nextTick } from 'vue';
+import { ref, getCurrentInstance } from 'vue';
 
 const {proxy} = getCurrentInstance();
 const api = {
@@ -168,7 +154,7 @@ const revertBatch = () => {
         if (!result) {
             return;
         }
-        loadDataList();
+        await loadDataList();
     });
 };
 
@@ -185,7 +171,7 @@ const delFile = (row) => {
         if (!result) {
             return;
         }
-        loadDataList();
+        await loadDataList();
         emit('reload');
     });
 };
@@ -201,7 +187,7 @@ const delBatch = () => {
         if (!result) {
             return;
         }
-        loadDataList();
+        await loadDataList();
         emit('reload');
     });
 };

@@ -12,8 +12,10 @@
 <script setup>
 import APlayer from 'APlayer';
 import 'APlayer/dist/Aplayer.min.css';
+import musicIcon from '@/assets/music_icon.jpg';
 
-import { ref, reactive, getCurrentInstance, nextTick, onMounted, onUnmounted } from 'vue';
+
+import { ref, getCurrentInstance, onMounted, onUnmounted } from 'vue';
 
 const {proxy} = getCurrentInstance();
 
@@ -34,7 +36,7 @@ onMounted(() => {
         audio: {
             url: `/api/${ props.url }`,
             name: props.fileName,
-            cover: new URL('@/assets/music_icon.png', import.meta.url).href,
+            cover: musicIcon,
             artist: ''
         }
     });

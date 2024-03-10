@@ -7,27 +7,25 @@
                     clearable
                     placeholder="选择编码"
                     v-model="encode"
-                    @change="changeEncode"
+                    @change="showTxt"
                 >
-                    <el-option value="utf8" label="utf8编码"></el-option>
-                    <el-option value="gbk" label="gbk编码"></el-option>
+                    <el-option value="utf8" label="utf8编码"/>
+                    <el-option value="gbk" label="gbk编码"/>
                 </el-select>
-                <div class="tips">乱码了? 切换编码</div>
             </div>
             <div class="copy-btn">
                 <el-button type="primary" @click="copy">复制</el-button>
             </div>
         </div>
-        <highlightjs autodetect :code="txtContent"></highlightjs>
+        <highlightjs autodetect :code="txtContent"/>
     </div>
 </template>
 
 <script setup>
 import useClipboard from 'vue-clipboard3';
+import { getCurrentInstance, onMounted, ref } from 'vue';
 
 const {toClipboard} = useClipboard();
-
-import { ref, reactive, getCurrentInstance, nextTick, onMounted } from 'vue';
 
 const {proxy} = getCurrentInstance();
 
@@ -37,7 +35,6 @@ const props = defineProps({
     }
 });
 
-const codeRef = ref();
 const txtContent = ref('');
 const blobResult = ref();
 const encode = ref('utf8');
@@ -53,16 +50,10 @@ const readTxt = async () => {
     showTxt();
 };
 
-const changeEncode = (e) => {
-    encode.value = e;
-    showTxt();
-};
-
 const showTxt = () => {
     const reader = new FileReader();
     reader.onload = () => {
-        let txt = reader.result;
-        txtContent.value = txt;
+        txtContent.value = reader.result;
     };
     reader.readAsText(blobResult.value, encode.value);
 };
@@ -92,11 +83,6 @@ const copy = async () => {
         display: flex;
         align-items: center;
         margin: 5px 10px;
-
-        .tips {
-            margin-left: 10px;
-            color: #828282;
-        }
     }
 
     .copy-btn {
@@ -104,7 +90,7 @@ const copy = async () => {
     }
 
     pre {
-        margin: 0px;
+        margin: 0;
     }
 }
 </style>
