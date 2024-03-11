@@ -70,7 +70,7 @@ const props = defineProps({
 
 const maxHeight = window.innerHeight - props.top - 100;
 
-const emit = defineEmits();
+const emit = defineEmits(['close']);
 const close = () => {
     emit('close');
 };
@@ -102,7 +102,7 @@ const close = () => {
         color: #fff;
         letter-spacing: 1px;
         line-height: 44px;
-        box-shadow: 6px 0px 0px #04ebfc;
+        box-shadow: 6px 0 0 #04ebfc;
         outline: transparent;
         position: relative;
     }

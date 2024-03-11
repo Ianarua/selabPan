@@ -27,12 +27,11 @@
 </template>
 
 <script setup>
-import { ref, reactive, getCurrentInstance } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
+import { ref, getCurrentInstance } from 'vue';
+import { useRoute } from 'vue-router';
 
 const {proxy} = getCurrentInstance();
 const router = useRoute();
-const route = useRoute();
 
 const timestamp = ref('');
 
@@ -98,7 +97,7 @@ const uploadImage = async (file) => {
             border: 0;
             color: #fff;
             letter-spacing: 1px;
-            box-shadow: 6px 0px 0px #ffee00;
+            box-shadow: 6px 0 0 #ffee00;
             outline: transparent;
             position: relative;
         }

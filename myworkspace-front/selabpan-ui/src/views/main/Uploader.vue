@@ -56,7 +56,8 @@
                                 iconName="upload"
                                 v-if="item.pause"
                                 title="上传"
-                                @click="startUpload(item.uid)"/>
+                                @click="startUpload(item.uid)"
+                            />
                             <Icon
                                 v-else
                                 :width="28"

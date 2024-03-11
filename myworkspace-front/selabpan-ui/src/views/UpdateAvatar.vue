@@ -20,7 +20,7 @@
                 </el-form-item>
 
                 <el-form-item label="头像" prop="">
-                    <AvatarUpload v-model="formData.avatar"></AvatarUpload>
+                    <AvatarUpload v-model="formData.avatar"/>
                 </el-form-item>
             </el-form>
         </Dialog>
@@ -55,13 +55,13 @@ const dialogConfig = ref({
         {
             type: 'primary',
             text: '确定',
-            click: (e) => {
+            click: () => {
                 submitForm();
             }
         }
     ]
 });
-const emit = defineEmits();
+const emit = defineEmits(['updateAvatar']);
 const submitForm = async () => {
     if (!(formData.value.avatar instanceof File)) {
         dialogConfig.value.show = false;

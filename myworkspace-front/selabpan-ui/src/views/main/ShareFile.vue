@@ -43,7 +43,7 @@
                             v-model="formData.code"
                             maxLength="5"
                             :style="{ width: '130px' }"
-                        ></el-input>
+                        />
                     </el-form-item>
                 </template>
                 <template v-else>
@@ -69,7 +69,7 @@
 import useClipboard from 'vue-clipboard3';
 
 const {toClipboard} = useClipboard();
-import { ref, reactive, getCurrentInstance, nextTick } from 'vue';
+import { ref, getCurrentInstance, nextTick } from 'vue';
 
 const {proxy} = getCurrentInstance();
 

@@ -217,8 +217,7 @@ const api = {
     sendEmailCode: '/sendEmailCode',
     register: '/register',
     login: '/login',
-    resetPwd: '/resetPwd',
-    qqlogin: '/qqlogin'
+    resetPwd: '/resetPwd'
 };
 
 // 操作类型 0:注册 1:登录 2:重置密码
@@ -289,7 +288,7 @@ const dialogConfigSendMailCode = reactive({
         {
             type: 'primary',
             text: '发送验证码',
-            click: (e) => {
+            click: () => {
                 sendEmailCode();
             }
         }
@@ -301,13 +300,10 @@ const getEmailCode = () => {
             return;
         }
         dialogConfigSendMailCode.show = true;
-        nextTick(() => {
-            changeCheckCode(1);
-            formData4SendMailCodeRef.value.resetFields();
-            formData4SendMailCode.value = {
-                email: formData.value.email
-            };
-        });
+        changeCheckCode(1);
+        formData4SendMailCode.value = {
+            email: formData.value.email
+        };
     });
 };
 // 发送邮箱验证码

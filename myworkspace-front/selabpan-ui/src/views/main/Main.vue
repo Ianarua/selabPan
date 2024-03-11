@@ -289,14 +289,8 @@ const editFileName = (index) => {
     let currentData = tableData.value.list[index];
     currentData.showEdit = true;
     // 编辑文件名
-    console.log(123321);
-    currentData.fileNameReal = currentData.fileName.substring(
-        0,
-        currentData.fileName.indexOf('.')
-    );
-    currentData.fileSuffix = currentData.fileName.substring(
-        currentData.fileName.indexOf('.')
-    );
+    currentData.fileNameReal = currentData.fileName.substring(0, currentData.fileName.indexOf('.'));
+    currentData.fileSuffix = currentData.fileName.substring(currentData.fileName.indexOf('.'));
 
     editing.value = true;
     nextTick(() => {
@@ -366,11 +360,6 @@ const preview = (data) => {
     previewRef.value.showPreview(data, 0);
 };
 
-const navChange = (data) => {
-    category.value = data;
-    loadDataList();
-};
-
 // 下载文件
 const download = async (row) => {
     let result = await proxy.Request({
@@ -388,11 +377,11 @@ const share = (row) => {
     shareRef.value.show(row);
 };
 
-// 切换路由
+// 路由信息
 const route = useRoute();
 
 const init = () => {
-    navChange(category.value);
+    loadDataList();
 
 };
 

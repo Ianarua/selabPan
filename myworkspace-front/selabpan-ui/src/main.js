@@ -27,7 +27,6 @@ import Avatar from '@/components/Avatar.vue';
 import Table from '@/components/Table.vue';
 import Icon from '@/components/Icon.vue';
 import NoData from '@/components/NoData.vue';
-import Navigation from '@/components/Navigation.vue';
 import Preview from '@/components/preview/Preview.vue';
 import Window from '@/components/Window.vue';
 
@@ -42,7 +41,6 @@ app.component('Avatar', Avatar);
 app.component('Table', Table);
 app.component('Icon', Icon);
 app.component('NoData', NoData);
-app.component('Navigation', Navigation);
 app.component('Preview', Preview);
 app.component('Window', Window);
 

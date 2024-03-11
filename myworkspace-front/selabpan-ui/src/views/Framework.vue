@@ -16,7 +16,7 @@
                     :popper-style="{ padding: '0px' }"
                 >
                     <template #reference>
-                        <span class="iconfont icon-transfer"></span>
+                        <span class="iconfont icon-transfer"/>
                     </template>
                     <template #default>
                         <Uploader
@@ -65,7 +65,7 @@
                                 item.menuCode === currentMenu.menuCode ? 'active' : '',     // 判断当前选择的哪个
                             ]"
                         >
-                            <div :class="['iconfont', 'icon-' + item.icon]"></div>
+                            <div :class="['iconfont', 'icon-' + item.icon]"/>
                             <div class="text">{{ item.name }}</div>
                         </div>
                     </template>
@@ -85,7 +85,7 @@
                             <el-progress
                                 :percentage="Math.floor((useSpaceInfo.useSpace / useSpaceInfo.totalSpace) * 10000) / 100"
                                 color="#f701ff"
-                            ></el-progress>
+                            />
                         </div>
                         <div class="space-use">
                             <div class="use">
@@ -105,7 +105,7 @@
                         :is="Component"
                         @addFile="addFile"
                         @reload="getUseSpace"
-                    ></component>
+                    />
                 </router-view>
             </div>
         </div>
@@ -115,7 +115,7 @@
             @updateAvatar="reloadAvatar">
         </UpdateAvatar>
         <!-- 修改密码 -->
-        <UpdatePassword ref="updatePasswordRef"></UpdatePassword>
+        <UpdatePassword ref="updatePasswordRef"/>
     </div>
 </template>
 
@@ -229,27 +229,6 @@ const menus = [
             {
                 name: '删除的文件',
                 path: '/recycle'
-            }
-        ]
-    },
-    {
-        path: '/settings/fileList',
-        icon: 'settings',
-        name: '设置',
-        menuCode: 'settings',
-        allShow: false,
-        children: [
-            {
-                name: '用户文件',
-                path: '/settings/fileList'
-            },
-            {
-                name: '用户管理',
-                path: '/settings/userList'
-            },
-            {
-                name: '系统设置',
-                path: '/settings/sysSetting'
             }
         ]
     }

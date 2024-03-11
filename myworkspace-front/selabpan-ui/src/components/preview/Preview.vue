@@ -137,7 +137,7 @@ defineExpose({showPreview});
         6: Excel 文件（excel）
         7: 文本文件（txt）
         8: 其他文件类型（md）
-        10: 需要下载文件（zip、ppt）
+        9: 需要下载文件（zip、ppt）
     fileId: 文件的唯一标识符
     fileName: 文件名
     fileCover: 文件封面图的 URL
